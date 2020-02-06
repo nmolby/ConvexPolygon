@@ -21,17 +21,17 @@ using std::string;
 
 int main(int argc, const char * argv[]) {
 
-    string filename;
-    if (argc > 1) {
-        filename = argv[1];
-    }
-    else {
-        cout << "enter filename: ";
-        cin >> filename;
-    }
+//    string filename;
+//    if (argc > 1) {
+//        filename = argv[1];
+//    }
+//    else {
+//        cout << "enter filename: ";
+//        cin >> filename;
+//    }
 
     // create the class
-    Renderer *renderer = new ConvexPolygonRenderer("ConvexPolygon", 960, 540, filename);
+    Renderer *renderer = new ConvexPolygonRenderer("ConvexPolygon", 960, 540, "/Users/nmolby/Desktop/Computer Graphics/ConvexPolygon/DataFiles/in1.txt");
 
     // and enter the run loop
     renderer->runLoop();
