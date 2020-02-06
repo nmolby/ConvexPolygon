@@ -2,9 +2,10 @@
 //  ConvexPolygonRenderer.hpp
 //  ComputerGraphics
 //
-//  Created by David M. Reed on 1/28/20.
-//  Copyright © 2020 David M Reed. All rights reserved.
+//  Created by Nathan Molby on 2/6/20.
+//  Copyright © 2020 Nathan Molby All rights reserved.
 //
+
 
 #ifndef ConvexPolygonRenderer_hpp
 #define ConvexPolygonRenderer_hpp

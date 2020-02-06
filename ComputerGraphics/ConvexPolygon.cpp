@@ -2,8 +2,8 @@
 //  ConvexPolygon.cpp
 //  ComputerGraphics
 //
-//  Created by David M. Reed on 1/28/20.
-//  Copyright © 2020 David M Reed. All rights reserved.
+//  Created by Nathan Molby on 2/6/20.
+//  Copyright © 2020 Nathan Molby All rights reserved.
 //
 
 #include "ConvexPolygon.hpp"
@@ -26,8 +26,70 @@ void ConvexPolygon::set(const std::vector<Point3D> &points, const Color &color, 
 
 void ConvexPolygon::render(Renderer *renderer) {
     std::vector<Point3D> newPoints = getAlteredPoints();
+    std::vector<Point3D> pointsToDraw;
+    float minY = newPoints[0].y, maxY = newPoints[0].y;
     
-    renderer->addPoints(newPoints, _color);
+    for(Point3D point: newPoints){
+        if(point.y > maxY)
+            maxY = point.y;
+        if(point.y < minY)
+            minY = point.y;
+    }
+    
+    std::cout << minY << std::endl << maxY;
+    
+
+    
+    for(int y = std::ceil(minY); y <= std::floor(maxY); y++){
+        bool x1Init = false;
+        int x1, x2;
+        float t, x;
+        
+        for(int i = 0; i < newPoints.size() - 1; i++){
+            //if the current y is between the next point and this point but not equal to BOTH of them
+            if(((newPoints[i].y <= y && y <= newPoints[i + 1].y) ||
+                (newPoints[i].y >= y && y >= newPoints[i + 1].y)) &&
+               !(newPoints[i].y == y && y == newPoints[i + 1].y)){
+                t = (y - newPoints[i].y) / (newPoints[i + 1].y - newPoints[i].y);
+                
+                x = (newPoints[i + 1].x - newPoints[i].x) * t + newPoints[i].x;
+                
+                if(!x1Init){
+                    x1 = x;
+                    x1Init = true;
+                } else{
+                    x2 = x;
+                }
+            }
+        }
+        
+        //if the current y is between the first point and last point but not equal to BOTH of them
+        if(((newPoints[0].y <= y && y <= newPoints[newPoints.size() - 1].y) ||
+            (newPoints[0].y >= y && y >= newPoints[newPoints.size() - 1].y)) &&
+           !(newPoints[0].y == y && y == newPoints[newPoints.size() - 1].y))
+        {
+            t = (y - newPoints[0].y) / (newPoints[newPoints.size() - 1].y - newPoints[0].y);
+            
+            x = (newPoints[newPoints.size() - 1].x - newPoints[0].x) * t + newPoints[0].x;
+            
+            if(!x1Init){
+                x1 = x;
+                x1Init = true;
+            } else{
+                x2 = x;
+            }
+        }
+        
+        int minX = x1 < x2 ? x1 : x2;
+        int maxX = x1 > x2 ? x1 : x2;
+        
+        for(int x = minX; x <= maxX; x++){
+            pointsToDraw.push_back(Point3D(x, y));
+        }
+        
+    }
+    
+    renderer->addPoints(pointsToDraw, _color);
 }
 
 Point3D ConvexPolygon::centerPoint() const { 

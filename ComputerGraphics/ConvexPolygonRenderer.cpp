@@ -2,9 +2,10 @@
 //  ConvexPolygonRenderer.cpp
 //  ComputerGraphics
 //
-//  Created by David M. Reed on 1/28/20.
-//  Copyright © 2020 David M Reed. All rights reserved.
+//  Created by Nathan Molby on 2/6/20.
+//  Copyright © 2020 Nathan Molby All rights reserved.
 //
+
 
 #include <fstream>
 #include "ConvexPolygon.hpp"
@@ -23,7 +24,6 @@ ConvexPolygonRenderer::ConvexPolygonRenderer(std::string windowTitle, int width,
         // store it in case we want to use it in the future
         _polygons.push_back(polygon);
         
-        std::cout <<"one down";
     }
     infile.close();
 }
