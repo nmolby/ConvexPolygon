@@ -14,7 +14,6 @@ ConvexPolygon::ConvexPolygon(const std::vector<Point3D> &points, const Color &co
 }
 
 void ConvexPolygon::set(const std::vector<Point3D> &points, const Color &color, const float scaleX, const float scaleY, const float translateX, const float translateY, const float rotateDeg){
-    
     _points = points;
     _color = color;
     _scaleX = scaleX;
@@ -29,6 +28,7 @@ void ConvexPolygon::render(Renderer *renderer) {
     std::vector<Point3D> pointsToDraw;
     float minY = newPoints[0].y, maxY = newPoints[0].y;
     
+    //get the min and max y for this polygon
     for(Point3D point: newPoints){
         if(point.y > maxY)
             maxY = point.y;
@@ -36,47 +36,41 @@ void ConvexPolygon::render(Renderer *renderer) {
             minY = point.y;
     }
     
-    std::cout << minY << std::endl << maxY;
-    
+    //add the first point to the end of the list of points so that it will be connected to the last point
+    newPoints.push_back(newPoints[0]);
 
-    
+    //loop through every y value that the polygon occupies
     for(int y = std::ceil(minY); y <= std::floor(maxY); y++){
-        bool x1Init = false;
+        //keeps track of if x1 and x2 have been initialized
+        bool x1Init = false, x2Init = false;
         int x1, x2;
         float t, x;
         
+        //for every point except the last one (since we will be comparing them with the point after)
         for(int i = 0; i < newPoints.size() - 1; i++){
+            
             //if the current y is between the next point and this point but not equal to BOTH of them
             if(((newPoints[i].y <= y && y <= newPoints[i + 1].y) ||
                 (newPoints[i].y >= y && y >= newPoints[i + 1].y)) &&
                !(newPoints[i].y == y && y == newPoints[i + 1].y)){
+                //gets the t and x value from the parametric equation
                 t = (y - newPoints[i].y) / (newPoints[i + 1].y - newPoints[i].y);
                 
                 x = (newPoints[i + 1].x - newPoints[i].x) * t + newPoints[i].x;
                 
+                //if x1 has not been initialized, initialize x1
                 if(!x1Init){
                     x1 = x;
                     x1Init = true;
-                } else{
+                //if x1 has been initialized but x2 has not, initalize x2
+                } else if(!x2Init){
+                    x2 = x;
+                    x2Init = true;
+                //if both x1 and x2 have been initialized but they are equal, set x2 to x
+                //accounts for situations where yscan line passes through a point, where 3 or even 4 x's would be found
+                } else if(x1 == x2){
                     x2 = x;
                 }
-            }
-        }
-        
-        //if the current y is between the first point and last point but not equal to BOTH of them
-        if(((newPoints[0].y <= y && y <= newPoints[newPoints.size() - 1].y) ||
-            (newPoints[0].y >= y && y >= newPoints[newPoints.size() - 1].y)) &&
-           !(newPoints[0].y == y && y == newPoints[newPoints.size() - 1].y))
-        {
-            t = (y - newPoints[0].y) / (newPoints[newPoints.size() - 1].y - newPoints[0].y);
-            
-            x = (newPoints[newPoints.size() - 1].x - newPoints[0].x) * t + newPoints[0].x;
-            
-            if(!x1Init){
-                x1 = x;
-                x1Init = true;
-            } else{
-                x2 = x;
             }
         }
         
@@ -92,7 +86,7 @@ void ConvexPolygon::render(Renderer *renderer) {
     renderer->addPoints(pointsToDraw, _color);
 }
 
-Point3D ConvexPolygon::centerPoint() const { 
+Point3D ConvexPolygon::centerPoint() const {
     float totX = 0, totY = 0;
     
     for(int i = 0; i < _points.size(); i++){
@@ -100,6 +94,7 @@ Point3D ConvexPolygon::centerPoint() const {
         totY += _points[i].y;
     }
     
+    //returns the average point, ie sum of x / count of x and sum of y / count of y
     return Point3D(totX / _points.size(), totY / _points.size());
 }
 
@@ -155,11 +150,13 @@ std::istream& operator>>(std::istream &is, ConvexPolygon &myPolygon) {
     float r, g, b, xScale, yScale, xTranslate, yTranslate, rotateAmount;
     int vertexCount;
     
+    //reads the vertex count
     is >> vertexCount;
     
     
     std::vector<Point3D> points;
     
+    //for every vertex, read an x and y value
     for(int i = 0; i < vertexCount; i++){
         float x, y;
         is >> x >> y;
@@ -167,6 +164,7 @@ std::istream& operator>>(std::istream &is, ConvexPolygon &myPolygon) {
         points.push_back(newPoint);
     }
 
+    //read the rest of the instance variables
     is >> r >> g >> b >> xScale >> yScale >> xTranslate >> yTranslate >> rotateAmount;
     Color color(r, g, b);
     

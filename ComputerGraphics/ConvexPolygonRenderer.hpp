@@ -16,9 +16,10 @@
 
 class ConvexPolygonRenderer: public Renderer {
 public:
-    /// Renderer subclass for reading and rendering Rectangles
-    /// @param window GLFW window
-    /// @param filename filename containing Rectangle data
+    /** Renderer subclass for reading and rendering Rectangles
+     @param window GLFW window
+     @param filename filename containing Rectangle data
+     */
     ConvexPolygonRenderer(std::string windowTitle, int width, int height, std::string filename);
 
     virtual ~ConvexPolygonRenderer() noexcept {}
@@ -27,8 +28,6 @@ public:
     
 private:
     std::vector<ConvexPolygon> _polygons;
-    
-    
 };
 
 #endif /* ConvexPolygonRenderer_hpp */
